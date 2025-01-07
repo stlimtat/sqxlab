@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "root.go",
         "server.go",
+        "session.go",
     ],
     importpath = "github.com/stlimtat/sqxlab/go/internal/config",
     visibility = ["//:__subpackages__"],
