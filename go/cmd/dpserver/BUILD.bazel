@@ -1,0 +1,29 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "dpserver_lib",
+    srcs = [
+        "main.go",
+        "root.go",
+        "server.go",
+    ],
+    importpath = "github.com/stlimtat/sqxlab/go/cmd/dpserver",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//internal/config",
+        "//internal/http",
+        "//internal/telemetry",
+        "@com_github_gin_gonic_gin//:gin",
+        "@com_github_go_mods_zerolog_gin//:zerolog-gin",
+        "@com_github_rs_zerolog//:zerolog",
+        "@com_github_spf13_cobra//:cobra",
+        "@com_github_spf13_viper//:viper",
+        "@org_golang_x_sync//errgroup",
+    ],
+)
+
+go_binary(
+    name = "dpserver",
+    embed = [":dpserver_lib"],
+    visibility = ["//visibility:public"],
+)
