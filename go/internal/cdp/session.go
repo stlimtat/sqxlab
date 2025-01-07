@@ -2,121 +2,83 @@ package cdp
 
 import (
 	"context"
-	"fmt"
 
-	playwright "github.com/playwright-community/playwright-go"
+	"github.com/chromedp/chromedp"
 	"github.com/rs/zerolog"
 	"github.com/stlimtat/sqxlab/go/internal/config"
 )
 
 type Session struct {
-	browser    playwright.Browser
-	cdpsession playwright.CDPSession
-	context    playwright.BrowserContext
-	cfg        config.SessionConfig
-	page       playwright.Page
-	playwright *playwright.Playwright
+	allocator       chromedp.Allocator
+	browser         *chromedp.Browser
+	cancelAllocator context.CancelFunc
+	cancelContext   context.CancelFunc
+	cdpctx          *chromedp.Context
+	cfg             config.SessionConfig
 }
 
 func NewSession(
 	ctx context.Context,
 	cfg config.SessionConfig,
-) *Session {
+) (*Session, context.Context, error) {
+	logger := zerolog.Ctx(ctx)
+	logger.Info().Msg("NewSession")
+
+	var err error
+
 	result := &Session{
 		cfg: cfg,
 	}
 
-	return result
-}
-
-func (s *Session) Start(ctx context.Context) error {
-	logger := zerolog.Ctx(ctx)
-	logger.Info().Msg("session.start")
-	var err error
-	s.playwright, err = playwright.Run()
+	// passes the allocator via the context
+	ctx, result.cancelAllocator = chromedp.NewRemoteAllocator(
+		ctx,
+		cfg.URL,
+		result.cfg.RemoteAllocatorOptions...,
+	)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
-	logger.Info().Msg("playwright.Run")
-	logger.Info().Msg("playwright.Chromium.Launch")
-	s.browser, err = s.playwright.Chromium.Launch(s.cfg.BrowserTypeLaunchOptions)
-	if err != nil {
-		return err
-	}
-	s.cdpsession, err = s.browser.NewBrowserCDPSession()
-	if err != nil {
-		return err
-	}
-	return nil
+
+	// passes the chromedp context via the context
+	ctx, result.cancelContext = chromedp.NewContext(ctx, result.cfg.ContextOptions...)
+
+	result.cdpctx = chromedp.FromContext(ctx)
+	result.allocator = result.cdpctx.Allocator
+
+	return result, ctx, nil
 }
 
-func (s *Session) GetBrowser(ctx context.Context) playwright.Browser {
-	return s.browser
-}
-
-func (s *Session) GetCDPSession(ctx context.Context) playwright.CDPSession {
-	return s.cdpsession
-}
-
-func (s *Session) Send(ctx context.Context, method string, params map[string]interface{}) (interface{}, error) {
-	logger := zerolog.Ctx(ctx)
-	logger.Info().Msg("cdpsession.send")
-	return s.cdpsession.Send(method, params)
-}
-
-func (s *Session) Goto(
+func (s *Session) SendTask(
 	ctx context.Context,
-	url string,
-	cdpMethod string,
-	cdpParams map[string]interface{},
-) (playwright.Response, error) {
+	tasks chromedp.Tasks,
+) (context.Context, *chromedp.Context, error) {
 	logger := zerolog.Ctx(ctx)
-	logger.Info().Msg("session.goto")
+	logger.Info().Msg("SendTask")
+
 	var err error
-	s.context, err = s.browser.NewContext(s.cfg.BrowserNewContextOptions)
+
+	err = chromedp.Run(ctx, tasks)
 	if err != nil {
-		return nil, err
+		return ctx, nil, err
 	}
-	logger.Info().Msg("browser.NewContext")
-	s.page, err = s.context.NewPage()
-	if err != nil {
-		return nil, err
-	}
-	logger.Info().Msg("context.NewPage")
-	response, err := s.page.Goto(url, s.cfg.PageGotoOptions)
-	if err != nil {
-		return nil, err
-	}
-	logger.Info().Msg("page.Goto")
-	if response.Status() != 200 {
-		return nil, fmt.Errorf("status: %d", response.Status())
-	}
-	return response, nil
+
+	return ctx, s.cdpctx, nil
 }
 
-func (s *Session) Stop(ctx context.Context) error {
+func (s *Session) Stop(ctx context.Context) {
 	logger := zerolog.Ctx(ctx)
-	logger.Info().Msg("session.stop")
-	var err error
-	if s.cdpsession != nil {
-		err = s.cdpsession.Detach()
-		if err != nil {
-			return err
-		}
+	logger.Info().Msg("Stop")
+
+	s.allocator.Wait()
+	logger.Info().Msg("Stop: allocator done")
+
+	select {
+	case <-ctx.Done():
+		logger.Info().Msg("Stop: context done")
+		// cancel the context using the cancel function
+		s.cancelContext()
+		// cancel the allocator using the cancel function
+		s.cancelAllocator()
 	}
-	if s.browser != nil {
-		err = s.browser.Close(playwright.BrowserCloseOptions{
-			Reason: playwright.String("session.stop"),
-		})
-		if err != nil {
-			return err
-		}
-	}
-	if s.playwright != nil {
-		err = s.playwright.Stop()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
