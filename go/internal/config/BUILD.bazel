@@ -11,6 +11,7 @@ go_library(
     visibility = ["//:__subpackages__"],
     deps = [
         "//internal/telemetry",
+        "@com_github_chromedp_chromedp//:chromedp",
         "@com_github_rs_zerolog//:zerolog",
         "@com_github_spf13_viper//:viper",
     ],
