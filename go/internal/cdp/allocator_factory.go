@@ -17,17 +17,14 @@ const (
 type DefaultAllocatorFactory struct {
 	allocator_type string
 	cfg            config.SessionConfig
-	url            string
 }
 
 func NewDefaultAllocatorFactory(
 	ctx context.Context,
 	cfg config.SessionConfig,
-	url string,
 ) *DefaultAllocatorFactory {
 	result := &DefaultAllocatorFactory{
 		cfg: cfg,
-		url: url,
 	}
 
 	return result
@@ -45,14 +42,14 @@ func (a *DefaultAllocatorFactory) NewAllocator(
 	logger := zerolog.Ctx(ctx)
 	logger.Info().Msg("NewAllocator")
 
-	a.allocator_type = a.GetAllocatorType()
+	a.allocator_type = a.GetAllocatorType(ctx, url)
 
 	var result chromedp.Allocator
 	var cancelFunc context.CancelFunc
 	switch a.allocator_type {
 	case AllocatorTypeRemote:
 		ctx, cancelFunc = chromedp.NewRemoteAllocator(
-			ctx, a.url,
+			ctx, url,
 			a.cfg.RemoteAllocatorOptions...,
 		)
 	case AllocatorTypeDefault:
@@ -71,8 +68,10 @@ func (a *DefaultAllocatorFactory) NewAllocator(
 	return ctx, cdpctx, result, cancelFunc
 }
 
-func (a *DefaultAllocatorFactory) GetAllocatorType() string {
-	if a.url != "" && strings.HasPrefix(a.url, "ws://") {
+func (a *DefaultAllocatorFactory) GetAllocatorType(
+	ctx context.Context, url string,
+) string {
+	if url != "" && strings.HasPrefix(url, "ws://") {
 		return AllocatorTypeRemote
 	}
 	return AllocatorTypeDefault

@@ -13,14 +13,14 @@ type IAllocatorFactory interface {
 		context.Context, string,
 	) (context.Context, *chromedp.Context, chromedp.Allocator, context.CancelFunc)
 
-	GetAllocatorType() string
+	GetAllocatorType(context.Context, string) string
 }
 
 type IContextFactory interface {
-	NewContext(ctx context.Context) (context.Context, *chromedp.Context, context.CancelFunc)
+	NewContext(context.Context) (context.Context, *chromedp.Context, context.CancelFunc)
 }
 
 type ISession interface {
-	Run(ctx context.Context, tasks chromedp.Tasks) (context.Context, *chromedp.Context, error)
-	Stop(ctx context.Context)
+	Run(context.Context, chromedp.Tasks) (context.Context, *chromedp.Context, error)
+	Stop(context.Context)
 }

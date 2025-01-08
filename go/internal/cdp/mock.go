@@ -42,17 +42,17 @@ func (m *MockIAllocatorFactory) EXPECT() *MockIAllocatorFactoryMockRecorder {
 }
 
 // GetAllocatorType mocks base method.
-func (m *MockIAllocatorFactory) GetAllocatorType() string {
+func (m *MockIAllocatorFactory) GetAllocatorType(arg0 context.Context, arg1 string) string {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllocatorType")
+	ret := m.ctrl.Call(m, "GetAllocatorType", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
 // GetAllocatorType indicates an expected call of GetAllocatorType.
-func (mr *MockIAllocatorFactoryMockRecorder) GetAllocatorType() *gomock.Call {
+func (mr *MockIAllocatorFactoryMockRecorder) GetAllocatorType(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllocatorType", reflect.TypeOf((*MockIAllocatorFactory)(nil).GetAllocatorType))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllocatorType", reflect.TypeOf((*MockIAllocatorFactory)(nil).GetAllocatorType), arg0, arg1)
 }
 
 // NewAllocator mocks base method.
@@ -97,9 +97,9 @@ func (m *MockIContextFactory) EXPECT() *MockIContextFactoryMockRecorder {
 }
 
 // NewContext mocks base method.
-func (m *MockIContextFactory) NewContext(ctx context.Context) (context.Context, *chromedp.Context, context.CancelFunc) {
+func (m *MockIContextFactory) NewContext(arg0 context.Context) (context.Context, *chromedp.Context, context.CancelFunc) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "NewContext", ctx)
+	ret := m.ctrl.Call(m, "NewContext", arg0)
 	ret0, _ := ret[0].(context.Context)
 	ret1, _ := ret[1].(*chromedp.Context)
 	ret2, _ := ret[2].(context.CancelFunc)
@@ -107,9 +107,9 @@ func (m *MockIContextFactory) NewContext(ctx context.Context) (context.Context, 
 }
 
 // NewContext indicates an expected call of NewContext.
-func (mr *MockIContextFactoryMockRecorder) NewContext(ctx any) *gomock.Call {
+func (mr *MockIContextFactoryMockRecorder) NewContext(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewContext", reflect.TypeOf((*MockIContextFactory)(nil).NewContext), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewContext", reflect.TypeOf((*MockIContextFactory)(nil).NewContext), arg0)
 }
 
 // MockISession is a mock of ISession interface.
@@ -137,9 +137,9 @@ func (m *MockISession) EXPECT() *MockISessionMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockISession) Run(ctx context.Context, tasks chromedp.Tasks) (context.Context, *chromedp.Context, error) {
+func (m *MockISession) Run(arg0 context.Context, arg1 chromedp.Tasks) (context.Context, *chromedp.Context, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", ctx, tasks)
+	ret := m.ctrl.Call(m, "Run", arg0, arg1)
 	ret0, _ := ret[0].(context.Context)
 	ret1, _ := ret[1].(*chromedp.Context)
 	ret2, _ := ret[2].(error)
@@ -147,19 +147,19 @@ func (m *MockISession) Run(ctx context.Context, tasks chromedp.Tasks) (context.C
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockISessionMockRecorder) Run(ctx, tasks any) *gomock.Call {
+func (mr *MockISessionMockRecorder) Run(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockISession)(nil).Run), ctx, tasks)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockISession)(nil).Run), arg0, arg1)
 }
 
 // Stop mocks base method.
-func (m *MockISession) Stop(ctx context.Context) {
+func (m *MockISession) Stop(arg0 context.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Stop", ctx)
+	m.ctrl.Call(m, "Stop", arg0)
 }
 
 // Stop indicates an expected call of Stop.
-func (mr *MockISessionMockRecorder) Stop(ctx any) *gomock.Call {
+func (mr *MockISessionMockRecorder) Stop(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stop", reflect.TypeOf((*MockISession)(nil).Stop), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stop", reflect.TypeOf((*MockISession)(nil).Stop), arg0)
 }

@@ -7,7 +7,9 @@ import (
 
 	"github.com/chromedp/chromedp"
 	"github.com/stlimtat/sqxlab/go/internal/config"
+	"github.com/stlimtat/sqxlab/go/internal/urls"
 	"github.com/stretchr/testify/assert"
+	gomock "go.uber.org/mock/gomock"
 )
 
 func TestNewAllocator(t *testing.T) {
@@ -30,9 +32,14 @@ func TestNewAllocator(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			factory := NewDefaultAllocatorFactory(ctx, tt.cfg, tt.url)
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
 
-			assert.Equal(t, tt.wantType, factory.GetAllocatorType())
+			urlDiscovery := urls.NewMockIUrlDiscovery(ctrl)
+			urlDiscovery.EXPECT().Discover(ctx).Return(tt.url, nil)
+			factory := NewDefaultAllocatorFactory(ctx, tt.cfg, urlDiscovery)
+
+			assert.Equal(t, tt.wantType, factory.GetAllocatorType(ctx))
 			ctx, cdpctx, got, cancel := factory.NewAllocator(ctx, tt.url)
 			assert.NotNil(t, ctx)
 			assert.NotNil(t, cdpctx)
