@@ -1,13 +1,36 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "cdp",
-    srcs = ["session.go"],
+    srcs = [
+        "allocator_factory.go",
+        "allocator_factory_mock.go",
+        "context_factory.go",
+        "context_factory_mock.go",
+        "session.go",
+        "session_mock.go",
+    ],
     importpath = "github.com/stlimtat/sqxlab/go/internal/cdp",
     visibility = ["//:__subpackages__"],
     deps = [
         "//internal/config",
-        "@com_github_playwright_community_playwright_go//:playwright-go",
+        "@com_github_chromedp_chromedp//:chromedp",
         "@com_github_rs_zerolog//:zerolog",
+        "@org_uber_go_mock//gomock",
+    ],
+)
+
+go_test(
+    name = "cdp_test",
+    srcs = [
+        "allocator_factory_test.go",
+        "session_test.go",
+    ],
+    embed = [":cdp"],
+    deps = [
+        "//internal/config",
+        "@com_github_chromedp_chromedp//:chromedp",
+        "@com_github_stretchr_testify//assert",
+        "@org_uber_go_mock//gomock",
     ],
 )

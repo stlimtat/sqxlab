@@ -9,47 +9,45 @@ import (
 )
 
 type Session struct {
-	allocator       chromedp.Allocator
-	browser         *chromedp.Browser
-	cancelAllocator context.CancelFunc
-	cancelContext   context.CancelFunc
-	cdpctx          *chromedp.Context
-	cfg             config.SessionConfig
+	allocator        chromedp.Allocator
+	allocatorFactory IAllocatorFactory
+	browser          *chromedp.Browser
+	cancelAllocator  context.CancelFunc
+	cancelContext    context.CancelFunc
+	cdpctx           *chromedp.Context
+	cfg              config.SessionConfig
+	url              string
 }
 
 func NewSession(
 	ctx context.Context,
+	allocatorFactory IAllocatorFactory,
 	cfg config.SessionConfig,
-) (*Session, context.Context, error) {
+	url string,
+) (context.Context, *Session, error) {
 	logger := zerolog.Ctx(ctx)
 	logger.Info().Msg("NewSession")
 
 	var err error
 
 	result := &Session{
-		cfg: cfg,
+		allocatorFactory: allocatorFactory,
+		cfg:              cfg,
+		url:              url,
 	}
 
 	// passes the allocator via the context
-	ctx, result.cancelAllocator = chromedp.NewRemoteAllocator(
-		ctx,
-		cfg.URL,
-		result.cfg.RemoteAllocatorOptions...,
+	ctx, result.cdpctx, result.allocator, result.cancelAllocator = result.allocatorFactory.NewAllocator(
+		ctx, result.url,
 	)
 	if err != nil {
-		return nil, nil, err
+		return ctx, nil, err
 	}
 
-	// passes the chromedp context via the context
-	ctx, result.cancelContext = chromedp.NewContext(ctx, result.cfg.ContextOptions...)
-
-	result.cdpctx = chromedp.FromContext(ctx)
-	result.allocator = result.cdpctx.Allocator
-
-	return result, ctx, nil
+	return ctx, result, nil
 }
 
-func (s *Session) SendTask(
+func (s *Session) Run(
 	ctx context.Context,
 	tasks chromedp.Tasks,
 ) (context.Context, *chromedp.Context, error) {
