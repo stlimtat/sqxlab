@@ -12,19 +12,22 @@ As the browser is the only interface accessible to the user, the minimal isolati
 
 There are two parts of the problem:
 
-## Part I: Setting up Chromium screencasting
+### Part I: Setting up Chromium screencasting
 
-Leveraging [CDP](https://chromedevtools.github.io/devtools-protocol/) to access screencasting while running chrome/chromium with a remote debugger.
-Setting up a web application (screencast client) to connect to websocket and use the CDP for screencasting.
-Accessing/Interacting with a single tab of the headless browser via the web application
+1. Leveraging [CDP](https://chromedevtools.github.io/devtools-protocol/) to access screencasting while running chrome/chromium with a remote debugger.
+1. Setting up a web application (screencast client) to connect to websocket and use the CDP for screencasting.
+1. Accessing/Interacting with a single tab of the headless browser via the web application
 
-## Part II: Orchestrating Part I for multiple users, i.e each user gets access to a dedicated browser session
+### Part II: Orchestrating Part I for multiple users, i.e each user gets access to a dedicated browser session
 
 The server will be running the following components:
-An API server to manage linux users and the lifecycle of the chromium headless browser.
-A proxy server to facilitate connection to the individual chromium websocket.
-A chromium headless browser for each user session running/confined to dedicated linux users.  
-Optionally, a static or dynamic web application (screencast client) can be served from the server.
+
+1. An API server to manage linux users and the lifecycle of the chromium headless browser.
+1. A proxy server to facilitate connection to the individual chromium websocket.
+1. A chromium headless browser for each user session running/confined to dedicated linux users.
+1. Optionally, a static or dynamic web application (screencast client) can be served from the server.
+
 The client machine will:
-Make an API call to the server to start a browser session.
-The web application (either running locally or served via the server) will connect to the websocket connection and provide the interactable browser session.
+
+1. Make an API call to the server to start a browser session.
+1. The web application (either running locally or served via the server) will connect to the websocket connection and provide the interactable browser session.
