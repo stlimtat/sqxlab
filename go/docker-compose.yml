@@ -1,0 +1,12 @@
+services:
+  headless:
+    image: chromedp/headless-shell:latest
+    healthcheck:
+      test: ["CMD", "grep", "2406", "/proc/net/tcp", ">", "/dev/null", "2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    ports:
+      - 9222:9222
+      - 9223:9223

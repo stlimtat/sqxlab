@@ -4,11 +4,11 @@ go_library(
     name = "cdp",
     srcs = [
         "allocator_factory.go",
-        "allocator_factory_mock.go",
+        "chromedp_mock.go",
         "context_factory.go",
-        "context_factory_mock.go",
+        "interface.go",
+        "mock.go",
         "session.go",
-        "session_mock.go",
     ],
     importpath = "github.com/stlimtat/sqxlab/go/internal/cdp",
     visibility = ["//:__subpackages__"],
@@ -24,11 +24,13 @@ go_test(
     name = "cdp_test",
     srcs = [
         "allocator_factory_test.go",
+        "context_factory_test.go",
         "session_test.go",
     ],
     embed = [":cdp"],
     deps = [
         "//internal/config",
+        "//internal/urls",
         "@com_github_chromedp_chromedp//:chromedp",
         "@com_github_stretchr_testify//assert",
         "@org_uber_go_mock//gomock",
