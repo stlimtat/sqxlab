@@ -57,9 +57,11 @@ func newRootCmd(ctx context.Context) *rootCmd {
 	if err != nil {
 		logger.Fatal().Err(err).Msg("viper.BindPFlag.config")
 	}
+	_, screencastCmd := newScreencastCmd(ctx)
 	_, serverCmd := newServerCmd(ctx)
 
 	result.cmd.AddCommand(
+		screencastCmd,
 		serverCmd,
 	)
 

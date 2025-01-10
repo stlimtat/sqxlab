@@ -1,0 +1,16 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "screencast",
+    srcs = ["screencast.go"],
+    importpath = "github.com/stlimtat/sqxlab/go/internal/screencast",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//internal/cdp",
+        "//internal/config",
+        "//internal/urls",
+        "@com_github_chromedp_cdproto//page",
+        "@com_github_chromedp_chromedp//:chromedp",
+        "@com_github_rs_zerolog//:zerolog",
+    ],
+)

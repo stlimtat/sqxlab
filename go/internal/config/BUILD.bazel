@@ -4,8 +4,10 @@ go_library(
     name = "config",
     srcs = [
         "root.go",
+        "screencast.go",
         "server.go",
         "session.go",
+        "url_discovery.go",
     ],
     importpath = "github.com/stlimtat/sqxlab/go/internal/config",
     visibility = ["//:__subpackages__"],

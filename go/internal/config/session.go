@@ -11,10 +11,10 @@ type SessionConfig struct {
 
 	// RemoteAllocatorOptions are the options to pass to the remote allocator.
 	RemoteAllocatorOptions []chromedp.RemoteAllocatorOption `json:"remote_allocator_options" mapstructure:"remote_allocator_options"`
+}
 
-	// URL is the websocket URL to connect to the Chrome DevTools Protocol.
-	// The url with the following formats are accepted:
-	//   - ws://127.0.0.1:9222/
-	//   - http://127.0.0.1:9222/
+type SessionContext struct {
+	SessionConfig
+	// URL for the current session
 	URL string `json:"url" mapstructure:"url"`
 }

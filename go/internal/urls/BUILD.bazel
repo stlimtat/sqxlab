@@ -1,0 +1,17 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "urls",
+    srcs = [
+        "interface.go",
+        "mock.go",
+        "url_discovery.go",
+    ],
+    importpath = "github.com/stlimtat/sqxlab/go/internal/urls",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//internal/config",
+        "@com_github_rs_zerolog//:zerolog",
+        "@org_uber_go_mock//gomock",
+    ],
+)

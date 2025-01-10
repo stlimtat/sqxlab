@@ -5,14 +5,17 @@ go_library(
     srcs = [
         "main.go",
         "root.go",
+        "screencast.go",
         "server.go",
     ],
     importpath = "github.com/stlimtat/sqxlab/go/cmd/dpserver",
     visibility = ["//visibility:private"],
     deps = [
+        "//internal/cdp",
         "//internal/config",
         "//internal/http",
         "//internal/telemetry",
+        "//internal/urls",
         "@com_github_gin_gonic_gin//:gin",
         "@com_github_go_mods_zerolog_gin//:zerolog-gin",
         "@com_github_rs_zerolog//:zerolog",
